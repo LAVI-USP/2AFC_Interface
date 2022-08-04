@@ -52,6 +52,9 @@ class MainFrame(Frame):
         random.shuffle(self.real_imgs_paths)
         random.shuffle(self.fake_imgs_paths)
         
+        self.real_imgs_paths = self.real_imgs_paths[:100]
+        self.fake_imgs_paths = self.fake_imgs_paths[:100]
+        # print(len(self.real_imgs_paths),len(self.fake_imgs_paths))
         self.where_is_fake = []
         self.where_user_clicked = []
         
@@ -101,11 +104,12 @@ class MainFrame(Frame):
         # Button Widget
         button_left  = Button(self.top_frame, text="This is real", width = 20, height=2, command=self.func_button_left)
         button_right = Button(self.top_frame, text="This is real", width = 20, height=2, command=self.func_button_right)
+        # button_print = Button(self.top_frame, text="print", width = 20, height=2, command=self.func_button_print)
 
 
         button_left.grid(row=0, column=0, columnspan=1)
         button_right.grid(row=0, column=1, columnspan=1)
-
+        # button_print.grid(row=1, column=0, columnspan=1)
 
         return
 
@@ -135,7 +139,10 @@ class MainFrame(Frame):
         self.get_next_images()
 
         return
-
+    
+    # def func_button_print(self):
+    #     print(self.real_imgs_paths[self.img_ind-1], self.fake_imgs_paths[self.img_ind-1])
+    #     return
         
     ########## General func ##########
     
@@ -158,6 +165,8 @@ class MainFrame(Frame):
         return img
     
     def get_next_images(self):
+        
+        # print(self.real_imgs_paths[self.img_ind], self.fake_imgs_paths[self.img_ind])
         
         img_real = readDicom(self.real_imgs_paths[self.img_ind])
         img_fake = readDicom(self.fake_imgs_paths[self.img_ind])
