@@ -1,0 +1,2 @@
+path2read_real=/my/folder/to/real
+path2read_simu=/my/folder/to/simu
