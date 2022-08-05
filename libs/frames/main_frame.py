@@ -9,7 +9,7 @@ from PIL import ImageTk, Image
 
 
 from .info_frame import info_frame
-from ..methods import find_real_rois, find_simu_rois, readDicom
+from ..utils.methods import find_real_rois, find_simu_rois, readDicom
 
 
 class MainFrame(Frame):

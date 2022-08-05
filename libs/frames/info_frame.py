@@ -34,7 +34,7 @@ class info_frame(Frame):
         
             creation_date = dt.datetime.now()
 
-            self.mainFrame.user_folder = './Results/{}-{}'.format(self.name, creation_date.strftime("%d_%m_%Y_%H_%M")) 
+            self.mainFrame.user_folder = './data/results/{}-{}'.format(self.name, creation_date.strftime("%d_%m_%Y_%H_%M")) 
 
             if not os.path.exists(self.mainFrame.user_folder):
                 os.makedirs(self.mainFrame.user_folder)

@@ -5,12 +5,8 @@ import numpy as np
 import os
 from distutils.dir_util import copy_tree
 
-f = open('data/paths.txt')
-contents = f.read()
-f.close()
-print(contents)
-path2read_real = contents.split('\n')[0].split('=')[1]
-path2read_simu = contents.split('\n')[1].split('=')[1]
+path2read_real = 'data/images/real'
+path2read_simu = 'data/images/simu'
 
 def readDicom(path):
     
