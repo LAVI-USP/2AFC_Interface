@@ -9,6 +9,8 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 root = Tk()
 
+root.title("2AFC")
+
 mainframe = MainFrame(root)
 
 # Loop

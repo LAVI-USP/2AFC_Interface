@@ -1,5 +1,6 @@
 
 import os
+import cv2
 import numpy as np
 import random
 
@@ -83,11 +84,11 @@ class MainFrame(Frame):
         self.build_btm_frame()
         
 
-    def build_top_frame(self):
+    def build_btm_frame(self):
         
 
         # Tmp image just to get space
-        img = np.zeros((200,200)).astype(np.uint8) * 128
+        img = np.zeros((400,400)).astype(np.uint8) * 128
         img2plot = ImageTk.PhotoImage(image=Image.fromarray(img))
 
         self.img_panel_left = Label(self.btm_frame, image=img2plot)
@@ -104,16 +105,19 @@ class MainFrame(Frame):
         self.right_scrollbar.grid(row=1, column=1, columnspan=1, sticky='EW')
         
         
-    def build_btm_frame(self):
+    def build_top_frame(self):
+
+        self.label = Label(self.top_frame, text = "Which image is real?")
 
         # Button Widget
-        button_left  = Button(self.top_frame, text="This is real", width = 20, height=2, command=self.func_button_left)
-        button_right = Button(self.top_frame, text="This is real", width = 20, height=2, command=self.func_button_right)
+        button_left  = Button(self.top_frame, text="This is real", width = 40, height=2, command=self.func_button_left)
+        button_right = Button(self.top_frame, text="This is real", width = 40, height=2, command=self.func_button_right)
         # button_print = Button(self.top_frame, text="print", width = 20, height=2, command=self.func_button_print)
 
+        self.label.grid(row=0, column=0, columnspan=2, sticky="we")
 
-        button_left.grid(row=0, column=0, columnspan=1)
-        button_right.grid(row=0, column=1, columnspan=1)
+        button_left.grid(row=1, column=0, columnspan=1, sticky="we")
+        button_right.grid(row=1, column=1, columnspan=1, sticky="we")
         # button_print.grid(row=1, column=0, columnspan=1)
 
         return
@@ -170,6 +174,8 @@ class MainFrame(Frame):
         img = (img - img.min()) / (img.max() - img.min())
         img *= 255
         img = np.uint8(img)
+
+        img  = cv2.resize(img, (0,0), fx=2, fy=2) 
         
         return img
     
