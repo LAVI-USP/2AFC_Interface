@@ -1,257 +1,87 @@
+from tkinter import Frame, Label, Button, Entry, filedialog, END, Toplevel
 
 import os
-import cv2
-import numpy as np
-import random
+import datetime as dt
 
-from tkinter import Frame, Label, Button, Entry, filedialog, END, Toplevel, \
-    Canvas, Listbox, Scale
-from PIL import ImageTk, Image
-
-
-from .info_frame import info_frame
-from ..utils.methods import find_real_rois, find_simu_rois, readDicom
-
+from .twoafc_frame import twoafc_frame
 
 class MainFrame(Frame):
+    
     def __init__(self, root):
-
-        self.root = root
-
-        ##########################################
-        # Variables
-        ##########################################
-        
-        self.img_ind = 0
-        
-        self.real_imgs_paths = find_real_rois()
-        self.fake_imgs_paths = find_simu_rois()
-        
-        random.shuffle(self.real_imgs_paths)
-        random.shuffle(self.fake_imgs_paths)
-        
-        self.real_imgs_paths = self.real_imgs_paths[:100]
-        self.fake_imgs_paths = self.fake_imgs_paths[:100]
-        #print(len(self.real_imgs_paths),len(self.fake_imgs_paths))
-
-        self.where_is_fake = []
-        self.where_user_clicked = []
-        
-        self.img_on_left = None
-        self.img_on_right = None
-
-        self.flag_info_ok = 0
-        self.user_folder = None
-        
-        ##########################################
-        # Frames
-        ##########################################
-
-        self.build_frames()
-
-        ##########################################
-        # Startup functions
-        ##########################################
 
         ##########################################
         # Info FRAME
         ##########################################
 
-        root_init_2afc = Toplevel(self.root)
+        self.root = root
+        self.root.title("Info")
 
-        root_init_2afc.title("Info")
-        # root_init_2afc.geometry("305x452")
-        # root_init_2afc.minsize(width=260, height=150)
-        # root_init_2afc.maxsize(width=260, height=150)
+        self.flag_info_ok = 0
+        self.user_folder = None
 
-        infoFrame = info_frame(root_init_2afc, self)
+        self.build_frame()
 
-        root_init_2afc.protocol("WM_DELETE_WINDOW", infoFrame.on_closing)
-
-        return
+    def build_frame(self):
         
-
-    def build_frames(self):
-
-        self.top_frame = Frame(self.root)
-        self.btm_frame = Frame(self.root)
-
-        # Palce it on a grid
-        self.top_frame.grid(row=0)
-        self.btm_frame.grid(row=1)
-
-        self.build_top_frame()
-        self.build_btm_frame()
+        self.first_txt  = Label(self.root,text='Please insert your name:')
+        self.entry_name = Entry(self.root)
+        self.startButton = Button(self.root, text="START", command=self.get_readername)
+        self.quitButton = Button(self.root, text="QUIT", command=self.on_quit)
         
-
-    def build_btm_frame(self):
-        
-
-        # Tmp image just to get space
-        img = np.zeros((400,400)).astype(np.uint8) * 128
-        img2plot = ImageTk.PhotoImage(image=Image.fromarray(img))
-
-        self.img_panel_left = Label(self.btm_frame, image=img2plot)
-        self.img_panel_right = Label(self.btm_frame, image=img2plot)
-        
-        self.left_scrollbar = Scale(self.btm_frame, orient='horizontal', from_=0, to=14, resolution=1,showvalue=False, command=lambda pos, name='left': self.get_next_slice(pos, name))
-        self.right_scrollbar = Scale(self.btm_frame, orient='horizontal', from_=0, to=14, resolution=1,showvalue=False, command=lambda pos, name='right': self.get_next_slice(pos, name))
-          
-
-        self.img_panel_left.grid(row=0, column=0, columnspan=1)
-        self.img_panel_right.grid(row=0, column=1, columnspan=1)
-        
-        self.left_scrollbar.grid(row=1, column=0, columnspan=1, sticky='EW')
-        self.right_scrollbar.grid(row=1, column=1, columnspan=1, sticky='EW')
-        
-        
-    def build_top_frame(self):
-
-        self.label = Label(self.top_frame, text = "Which image is real?")
-
-        # Button Widget
-        button_left  = Button(self.top_frame, text="This is real", width = 40, height=2, command=self.func_button_left)
-        button_right = Button(self.top_frame, text="This is real", width = 40, height=2, command=self.func_button_right)
-        # button_print = Button(self.top_frame, text="print", width = 20, height=2, command=self.func_button_print)
-
-        self.label.grid(row=0, column=0, columnspan=2, sticky="we")
-
-        button_left.grid(row=1, column=0, columnspan=1, sticky="we")
-        button_right.grid(row=1, column=1, columnspan=1, sticky="we")
-        # button_print.grid(row=1, column=0, columnspan=1)
+        self.first_txt.grid(column=0,row=0,sticky='nswe',columnspan=4)
+        self.entry_name.grid(column=0,row=1,sticky='nswe',columnspan=4)
+        self.startButton.grid(column=0,row=2,sticky='nswe',columnspan=4)
+        self.quitButton.grid(column=0,row=3,sticky='nswe',columnspan=4)
 
         return
 
     ########## Button func ##########
 
+    def get_readername(self): # No getting entry_name
 
-    def func_button_left(self):
+        self.name = self.entry_name.get()
 
-        if self.flag_info_ok:
+        if self.name:
         
-            self.where_user_clicked.append(1)
-            # print(self.where_user_clicked, self.where_is_fake)
-            # if self.where_user_clicked[-1] == self.where_is_fake[-1]:
-            #     print("Wrong")
-            # else:
-            #     print("Correct")
-            self.get_next_images()
+            creation_date = dt.datetime.now()
 
-        return
+            self.user_folder = './data/results/{}-{}'.format(self.name, creation_date.strftime("%d_%m_%Y_%H_%M")) 
 
-    def func_button_right(self):
+            if not os.path.exists(self.user_folder):
+                os.makedirs(self.user_folder)
 
-        if self.flag_info_ok:
-    
-            self.where_user_clicked.append(0)
-            # print(self.where_user_clicked, self.where_is_fake)
-            # if self.where_user_clicked[-1] == self.where_is_fake[-1]:
-            #     print("Wrong")
-            # else:
-            #     print("Correct")
-            self.get_next_images()
+            # Temporary alternative just to test the txt creation
+            user_code = ('Reader: {}'.format(self.name), creation_date.strftime("%d/%m/%Y %H:%M"))
+            with open(os.path.join(self.user_folder,'results.txt'), 'w') as f:
+                f.write(' '.join(str(s) for s in user_code) + '\n')
 
-        return
-    
-    # def func_button_print(self):
-    #     print(self.real_imgs_paths[self.img_ind-1], self.fake_imgs_paths[self.img_ind-1])
-    #     return
-        
-    ########## General func ##########
-    
-    
-    def show_img(self, img, img_panel):
-        
-        img2plot = ImageTk.PhotoImage(image=Image.fromarray(img))
-        
-        img_panel.configure(image=img2plot)
-        img_panel.image = img2plot    
-        
-        return
-    
-    def pre_process(self, img):
-        
-        img = (img - img.min()) / (img.max() - img.min())
-        img *= 255
-        img = np.uint8(img)
 
-        img  = cv2.resize(img, (0,0), fx=2, fy=2) 
-        
-        return img
-    
-    def get_next_images(self):
-        
-        # print(self.real_imgs_paths[self.img_ind], self.fake_imgs_paths[self.img_ind])
+            ##########################################
+            # 2AFC FRAME
+            ##########################################
 
-        if self.img_ind == 100:
-            self.calc_statistcs()
-            self.on_quit()
+            root_init_2afc = Toplevel(self.root)
+
+            self.twoafcFrame = twoafc_frame(root_init_2afc, self)
+
+            root_init_2afc.protocol("WM_DELETE_WINDOW", self.twoafcFrame.on_closing)
+        
+            self.on_closing()
+
         else:
-            img_real = readDicom(self.real_imgs_paths[self.img_ind])
-            img_fake = readDicom(self.fake_imgs_paths[self.img_ind])
-            
-            img_real = self.pre_process(img_real)
-            img_fake = self.pre_process(img_fake)
-            
-            if np.random.uniform() > 0.5:
-                # Show fake on left
-                self.where_is_fake.append(1)
-                self.img_on_left = img_fake
-                self.img_on_right = img_real
-                self.show_img(self.img_on_left[..., 7], self.img_panel_left)
-                self.show_img(self.img_on_right[..., 7], self.img_panel_right)
-            else:
-                # Show fake on right
-                self.where_is_fake.append(0)
-                self.img_on_left = img_real
-                self.img_on_right = img_fake
-                self.show_img(self.img_on_left[..., 7], self.img_panel_left)
-                self.show_img(self.img_on_right[..., 7], self.img_panel_right)
-                
-            self.left_scrollbar.set(7)
-            self.right_scrollbar.set(7)
-                
-            self.img_ind += 1
-   
-        return
-    
-    def get_next_slice(self, pos, name):
-
-        if self.flag_info_ok:
-        
-            if name == 'left':
-                self.show_img(self.img_on_left[..., int(pos)], self.img_panel_left)
-            else:
-                self.show_img(self.img_on_right[..., int(pos)], self.img_panel_right)
-            
-        return
-
-    def calc_statistcs(self):
-
-        # Question: Where is the Real?
-        #  --- where_user_clicked ---
-        # Button Left = 1
-        # Button Right = 0
-        #  --- where_is_fake ---
-        # Fake Left = 1
-        # Fake Right = 0
-        # ---------
-        # Example:
-        #
-        # where_user_clicked = [0, 1, 0]
-        # where_is_fake      = [1, 1, 0]
-        # Result             = [False, True, True]
-
-        numer_of_correct = np.size(np.where(np.array(self.where_user_clicked) ^ np.array(self.where_is_fake) == 1)[0])
-
-        with open(os.path.join(self.user_folder,'results.txt'), 'a') as f:
-                f.write("Percentage of correct choices: {}".format(numer_of_correct / 100))
+            print("No name")
 
         return
 
     def on_quit(self):
 
         self.root.quit()
+
+        return
+
+    def on_closing(self):
+
+        self.root.withdraw()
 
         return
 
