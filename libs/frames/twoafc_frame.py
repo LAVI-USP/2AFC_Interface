@@ -27,9 +27,10 @@ class twoafc_frame(Frame):
         self.real_imgs_paths = find_real_rois()
         self.fake_imgs_paths = find_simu_rois()
         
+        # print(len(self.real_imgs_paths),len(self.fake_imgs_paths))
+
         self.real_imgs_paths = self.real_imgs_paths[:100]
         self.fake_imgs_paths = self.fake_imgs_paths[:100]
-        # print(len(self.real_imgs_paths),len(self.fake_imgs_paths))
 
         random.shuffle(self.real_imgs_paths)
         random.shuffle(self.fake_imgs_paths)
@@ -44,9 +45,9 @@ class twoafc_frame(Frame):
         # Frames
         ##########################################
 
+        self.flag_info_ok = 1
         self.build_frames()
         self.get_next_images()
-        self.flag_info_ok = 1
 
         return
         
@@ -191,6 +192,7 @@ class twoafc_frame(Frame):
         
         img = (img - img.min()) / (img.max() - img.min())
         img *= 255
+        img = 255 - img
         img = np.uint8(img)
 
         img  = cv2.resize(img, (0,0), fx=2, fy=2) 
