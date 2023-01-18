@@ -61,45 +61,20 @@ class twoafc_frame(Frame):
 
         self.root.configure(background='black')
 
-        self.top_frame = Frame(self.root, width=screenwidth, height=200, bg = "black", highlightthickness=0)
+        self.top_frame = Frame(self.root, width=screenwidth//2, height=screenheight//2, bg = "black", highlightthickness=0)
         # self.top_frame.grid_propagate(0)
-        self.top_frame.rowconfigure(0, weight=1)
-        self.top_frame.rowconfigure(1, weight=1)
-        self.btm_frame = Frame(self.root, width=screenwidth, height=850, bg = "black", highlightthickness=0)
+        # self.top_frame.rowconfigure(0, weight=1)
+        # self.top_frame.rowconfigure(1, weight=1)
+        # self.btm_frame = Frame(self.root, width=screenwidth//2, height=screenheight//2, bg = "black", highlightthickness=10)
         # self.btm_frame.grid_propagate(0)
-        self.btm_frame.rowconfigure(0, weight=1)
-        self.btm_frame.rowconfigure(1, weight=1)
+        # self.btm_frame.rowconfigure(0, weight=1)
+        # self.btm_frame.rowconfigure(1, weight=1)
 
         # Palce it on a grid
         self.top_frame.pack(side="top", fill="y") #.grid(row=0)
-        self.btm_frame.pack(side="bottom", fill="y")#.grid(row=1)
 
         self.build_top_frame()
-        self.build_btm_frame()
-        
-    def build_btm_frame(self):
-        
-
-        # Tmp image just to get space
-        img = np.zeros((400,400)).astype(np.uint8) * 128
-        img2plot = ImageTk.PhotoImage(image=Image.fromarray(img))
-
-        self.img_panel_left = Label(self.btm_frame, image=img2plot, bg = "black")
-        self.img_panel_right = Label(self.btm_frame, image=img2plot, bg = "black")
-        
-        self.left_scrollbar = Scale(self.btm_frame, orient='horizontal', from_=0, to=14, resolution=1,showvalue=False, command=lambda pos, name='left': self.get_next_slice(pos, name), background='black', fg='black', troughcolor='black', activebackground='white', highlightthickness=0)
-        self.right_scrollbar = Scale(self.btm_frame, orient='horizontal', from_=0, to=14, resolution=1,showvalue=False, command=lambda pos, name='right': self.get_next_slice(pos, name), background='black', fg='black', troughcolor='black', activebackground='white', highlightthickness=0)
-          
-        self.left_scrollbar.set(7)
-        self.right_scrollbar.set(7)
-
-        self.btm_frame.bind_all("<MouseWheel>", self._on_mousewheel)
-
-        self.img_panel_left.grid(row=0, column=0, columnspan=1, ipady=10, sticky='NWNE', padx=(0, 10))
-        self.img_panel_right.grid(row=0, column=1, columnspan=1, ipady=10, sticky='NWNE', padx=(10, 0))
-        
-        self.left_scrollbar.grid(row=2, column=0, columnspan=1, sticky='SWSE', ipady=80, padx=(0, 10))
-        self.right_scrollbar.grid(row=2, column=1, columnspan=1, sticky='SWSE', ipady=80, padx=(10, 0))
+      
         
     def build_top_frame(self):
 
@@ -107,15 +82,37 @@ class twoafc_frame(Frame):
         self.label_number = Label(self.top_frame, text = "1/100", font=('TkDefaultFont',12), bg = "black", fg = "white")
 
         # Button Widget
-        button_left  = Button(self.top_frame, text="1", width=10, height=2, command=self.func_button_left, bg = "black", fg = "white")
-        button_right = Button(self.top_frame, text="2", width=10, height=2, command=self.func_button_right, bg = "black", fg = "white")
+        button_left  = Button(self.top_frame, text="1", width=9, height=2, command=self.func_button_left, bg = "black", fg = "white")
+        button_right = Button(self.top_frame, text="2", width=9, height=2, command=self.func_button_right, bg = "black", fg = "white")
         # button_print = Button(self.top_frame, text="print", width = 20, height=2, command=self.func_button_print)
 
-        self.label.grid(row=0, column=0, columnspan=2, sticky='EW', pady=(250, 5)) 
+        # Tmp image just to get space
+        img = np.zeros((400,400)).astype(np.uint8) * 128
+        img2plot = ImageTk.PhotoImage(image=Image.fromarray(img))
+
+        self.img_panel_left = Label(self.top_frame, image=img2plot, bg = "black")
+        self.img_panel_right = Label(self.top_frame, image=img2plot, bg = "black")
+        
+        self.left_scrollbar = Scale(self.top_frame, orient='horizontal', from_=0, to=14, resolution=1,showvalue=False, command=lambda pos, name='left': self.get_next_slice(pos, name), background='black', fg='black', troughcolor='black', activebackground='white', highlightthickness=0)
+        self.right_scrollbar = Scale(self.top_frame, orient='horizontal', from_=0, to=14, resolution=1,showvalue=False, command=lambda pos, name='right': self.get_next_slice(pos, name), background='black', fg='black', troughcolor='black', activebackground='white', highlightthickness=0)
+          
+        self.left_scrollbar.set(7)
+        self.right_scrollbar.set(7)
+
+        self.top_frame.bind_all("<MouseWheel>", self._on_mousewheel)
+
+        self.label.grid(row=0, column=0, columnspan=2, sticky='EW', pady=(200, 25)) 
         self.label_number.grid(row=1, column=0, columnspan=2, sticky='EW', pady=(5, 5)) 
 
-        button_left.grid(row=2, column=0, sticky='SWSE', padx=(5, 160))
-        button_right.grid(row=2, column=1, sticky='SWSE', padx=(160, 5))
+        button_left.grid(row=2, column=0, sticky='SWSE', padx=(5, 15))
+        button_right.grid(row=2, column=1, sticky='SWSE', padx=(15, 5))
+
+        self.img_panel_left.grid(row=3, column=0, columnspan=1, sticky='N', padx=(0, 10), pady=(1, 1))
+        self.img_panel_right.grid(row=3, column=1, columnspan=1, sticky='N', padx=(10, 0), pady=(1, 1))
+        
+        self.left_scrollbar.grid(row=4, column=0, columnspan=1, sticky='SWSE', ipady=80,  padx=(0, 10))
+        self.right_scrollbar.grid(row=4, column=1, columnspan=1, sticky='SWSE', ipady=80, padx=(10, 0))
+
         # button_print.grid(row=1, column=0, columnspan=1)
 
         return
