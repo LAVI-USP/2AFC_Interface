@@ -12,3 +12,10 @@ We are using [PyInstaller](https://www.pyinstaller.org/) to generate the .exe fi
 ## GUI preview:
 
 ![gui](https://user-images.githubusercontent.com/29632934/223138476-42350fae-b2eb-4ea8-853a-f5d9e8c8a82b.png)
+
+---
+Laboratory of Computer Vision ([Lavi](http://iris.sel.eesc.usp.br/lavi/))  
+Department of Electrical and Computer Engineering  
+São Carlos School of Engineering, University of São Paulo  
+São Carlos - Brazil
+
